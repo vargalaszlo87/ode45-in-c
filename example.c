@@ -14,7 +14,7 @@ int main() {
         tf = 1.0,
         tol = 1e-6;
 
-    rk45(
+    ode45(
         f, t0, y0, tf, tol
     );
     return 0;
