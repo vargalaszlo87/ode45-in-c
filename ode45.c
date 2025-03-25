@@ -1,6 +1,6 @@
 
 /*!
- * Genetic Algorithm JS v.0.9
+ * Ordinary Differential Equations in pure C v.0.1
  *
  * ode45.c
  *
