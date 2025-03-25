@@ -31,3 +31,11 @@ This is the Octave source code:
   
   plot(tout, yout);
 ```
+
+This is the differential equation in my code:
+
+```C
+  double f(double t, double y) {
+      return (-2 * pow(y,2) * sin(t)) * exp(-2 * y);
+  }
+```
