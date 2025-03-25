@@ -30,6 +30,11 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
+
+#define STEP_DIVIDER 1e4
+#define STEP_MIN 1e-6
+#define STEP_MAX_DIVIDER 5.0
 
 /*
 * Dormand-Prince coeffitient
@@ -75,11 +80,20 @@ const double c[]  = {
 */
 
 void ode45(double (*f)(double, double), double t0, double y0, double tf, double tol) {
-    double t = t0;
-    double y = y0;
-    double h = (tf - t0) / 1e4;
-    double h_min = 1e-6;
-    double h_max = (tf - t0) / 5.0;
+
+    // pointer is not null
+    assert(f != NULL);
+    // t_start is smaller than t_end
+    assert(t0 < tf);
+    // the tolerance is positiv
+    assert(tol > 0);
+
+    double
+        t = t0,
+        y = y0,
+        h = (tf - t0) / STEP_DIVIDER,
+        h_min = STEP_MIN,
+        h_max = (tf - t0) / STEP_MAX_DIVIDER;
 
     while (t < tf) {
         if (h < h_min) {
@@ -97,31 +111,31 @@ void ode45(double (*f)(double, double), double t0, double y0, double tf, double 
             k[i] = h * f(t + c[i] * h, y_temp);
         }
 
-        // 4. es 5. rendu becselesek
+        // 4th and 5th grade estimations
         double y4 = y, y5 = y;
         for (int i = 0; i < 7; i++) {
             y4 += b[i] * k[i];
             y5 += bs[i] * k[i];
         }
 
-        // hibabecsles
+        // error estimation
         double error = fabs(y5 - y4);
 
-        // lepeskoz becsles
+        // step estimation
         double s = pow(tol / (error + 1e-10), 0.2);
         double h_new = h * fmin(5.0, fmax(0.1, s));
 
         if (error > tol) {
             h = fmax(h_new, h_min);
-            continue;  // ujra --> kisebb lepessel
+            continue;  // again --> smaller step
         }
 
-        // sikeres lepes
+        // next step
         t += h;
         y = y5;
         printf("t = %.5f, y = %.8f, error = %.2e, h = %.5e\n", t, y, error, h);
 
-        // frissitett lepeskoz
+        // update step
         h = fmin(fmax(h_new, h_min), h_max);
         if (t + h > tf) h = tf - t;
     }
