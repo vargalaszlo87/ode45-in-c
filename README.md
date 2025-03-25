@@ -87,7 +87,7 @@ tout = 0.87038, yout = 0.9041
 
 ### The results of benchmark:
 
-** "t" and "y" come from my C code, "tout" and "yout" come from reference octave code. **
+**"t" and "y" come from my C code, "tout" and "yout" come from reference octave code.**
 
 ```
 t = 0.00060, y = 0.99999995
