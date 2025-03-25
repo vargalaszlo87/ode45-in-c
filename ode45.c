@@ -1,7 +1,53 @@
+
+/*!
+ * Genetic Algorithm JS v.0.9
+ *
+ * ode45.c
+ *
+ * This is a Runge-Kutta solver of differential equation with Dormand-Prince coeffitient.
+ *
+ * Copyright (C) 2025 Varga Laszlo
+ *
+ * https://github.com/vargalaszlo87/ode45-in-c
+ * http://vargalaszlo.com
+ * http://ha1cx.hu
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Date: 2025-03-25
+ */
+
 #include <stdio.h>
 #include <math.h>
 
-// Dormand-Prince egyutthatok (RK45)
+/*
+* Dormand-Prince coeffitient
+* The Butcher tableau is:
+*
+*	0
+*	1/5 	1/5
+*	3/10 	3/40 	    9/40
+*	4/5 	44/45 	    −56/15 	    32/9
+*	8/9 	19372/6561 	−25360/2187 64448/6561 	−212/729
+*	1 	    9017/3168 	−355/33 	46732/5247 	49/176 	    −5103/18656
+*	1 	    35/384 	    0 	        500/1113 	125/192 	−2187/6784 	    11/84
+*	----------------------------------------------------------------------------------------
+*           35/384 	    0 	        500/1113 	125/192 	−2187/6784 	    11/84 	    0
+*           5179/57600 	0 	        7571/16695 	393/640 	−92097/339200 	187/2100 	1/40
+*
+*/
+
 const double a[7][6] = {
     {},
     {0.2},
@@ -24,16 +70,14 @@ const double c[]  = {
     0, 0.2, 0.3, 0.8, 8.0/9.0, 1.0, 1.0
 };
 
-
-// diff.egyenlet: dy/dt = -2*y^2
-double f(double t, double y) {
-    return -2.0 * y * y;
-}
+/*
+*   Runge-Kutta method with adaptiv step size
+*/
 
 void rk45(double (*f)(double, double), double t0, double y0, double tf, double tol) {
     double t = t0;
     double y = y0;
-    double h = (tf - t0) / 100.0;
+    double h = (tf - t0) / 1e4;
     double h_min = 1e-6;
     double h_max = (tf - t0) / 5.0;
 
@@ -81,17 +125,4 @@ void rk45(double (*f)(double, double), double t0, double y0, double tf, double t
         h = fmin(fmax(h_new, h_min), h_max);
         if (t + h > tf) h = tf - t;
     }
-}
-
-int main() {
-    double
-        t0 = 0.0,
-        y0 = 1.0,
-        tf = 5.0,
-        tol = 1e-6;
-    
-    rk45(
-        f, t0, y0, tf, tol
-    );
-    return 0;
 }
