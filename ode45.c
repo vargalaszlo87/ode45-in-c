@@ -74,7 +74,7 @@ const double c[]  = {
 *   Runge-Kutta method with adaptiv step size
 */
 
-void rk45(double (*f)(double, double), double t0, double y0, double tf, double tol) {
+void ode45(double (*f)(double, double), double t0, double y0, double tf, double tol) {
     double t = t0;
     double y = y0;
     double h = (tf - t0) / 1e4;
